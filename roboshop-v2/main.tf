@@ -15,40 +15,40 @@ variable "zone_id" {
 
 variable "components" {
   default = {
-    frontend  = {}
-    mongodb   = {}
-    catalogue = {}
-    user      = {}
-    redis     = {}
-    mysql     = {}
-    cart      = {}
-    rabbitmq  = {}
-    payment   = {}
-    shipping  = {}
-    dispatch  = {}
+    frontend  = { name = "frontend-dev"}
+    mongodb   = { name = "mongodb-dev" }
+    catalogue = { name = "catalogue-dev" }
+    user      = { name = "user-dev" }
+    redis     = { name = "redis-dev" }
+    mysql     = { name = "mysql-dev" }
+    cart      = { name = "cart-dev" }
+    rabbitmq  = { name = "rabbitmq-dev" }
+    payment   = { name = "payment-dev" }
+    shipping  = { name = "shipping-dev" }
+    dispatch  = { name = "dispatch-dev" }
   }
 }
+
 resource "aws_instance" "instance" {
   for_each = var.components
   ami           = var.ami
   instance_type = var.instance_type
-  vpc_security_group_ids = [var.security_groups]
+  vpc_security_group_ids = var.security_groups
 
   tags = {
-    Name = lookup(var.components, each.key, null)
+    Name = lookup(each.value, "name", null)
   }
 }
 
 resource "aws_route53_record" "record" {
   for_each = var.components
   zone_id = var.zone_id
-  name    = "frontend-dev.sgdevrobo.online"
+  name    = "${lookup(each.value,"name", null)}.sgdevrobo.online"
   type    = "A"
   ttl     = 30
-  records = [lookup(aws_instance.instance,each.key[""])]
+  records = [lookup(lookup(aws_instance.instance, each.key, null), "private_ip", null) ]
 }
 
-
 output "instances" {
-      value = aws_instance.instance
-    }
+  value = aws_instance.instance
+}
