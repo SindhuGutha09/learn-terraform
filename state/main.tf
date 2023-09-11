@@ -3,7 +3,9 @@ terraform {
 
   }
 }
-variable "test" {}
-output "test" {
+variable "test" {
+  default = "hello"
+}
+  output "test" {
   value = var.test
 }
