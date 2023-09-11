@@ -1,5 +1,8 @@
 terraform {
   backend "s3" {
+    bucket ="tf-state-sgdev"
+    key ="state/terraform.tfstate"
+    region= "us-east-1"
 
   }
 }
