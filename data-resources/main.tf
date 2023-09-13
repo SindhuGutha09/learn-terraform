@@ -1,6 +1,6 @@
 data "aws_ami_ids" "ami" {
   name_regex       = "Centos-*"
-  owners           = ["973714476881"]
+  owners           = ["342367090197"]
 
 }
 output "ami" {
